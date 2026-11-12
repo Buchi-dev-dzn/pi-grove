@@ -120,6 +120,27 @@ Peers are not subagents. A subagent is called by a parent, does one job, returns
 
 To work side by side with a peer yourself, open a second terminal in its worktree and run `pi` there, or start your own with `git worktree add` and `pi`. Both join the same grove.
 
+### In the conversation
+
+Peer activity is drawn as an exchange, not as generic tool calls. The peer's name has the same color as its lane in the graph.
+
+```
++ strings  new peer
+  Implement src/strings.js with tests. Own only those two files.
+  ✓ grove/strings · ~/toolbox.grove/strings
+
+→ strings
+  Math is done. Keep the string helpers free of dependencies.
+
+← strings
+  Ready on grove/strings. All 3 tests pass.
+
+▪ board  note for all peers
+  main owns src/math.js; strings owns src/strings.js.
+```
+
+`+` starts a peer, `→` is a message your agent sent, `←` is a message that arrived, and `▪` is a note on the shared board. Long texts show their first three rows; expand them like any tool output (`ctrl+o` by default).
+
 ### Tools
 
 | Tool | What it does |
@@ -233,6 +254,7 @@ The code is split so that most of it runs without pi:
 | `src/peers/runtime.ts` | Forking a session file and running a background peer |
 | `src/peers/controller.ts`, `tools.ts`, `prompt.ts` | Wiring peers into a pi session |
 | `src/ui/grove-view.ts` | The panel |
+| `src/ui/chat.ts` | How peer activity is drawn in the conversation |
 | `src/index.ts` | Extension entry point |
 
 ## License

@@ -19,6 +19,7 @@ import { contentText, FILTER_MODES, type FilterMode, type Grove, type GroveNode,
 import { renderRow, type Segment } from "../graph/render.ts";
 import type { BoardNote, PeerMessage, PeerMode, PeerView } from "../peers/hub.ts";
 import type { ReflogEntry } from "../reflog/journal.ts";
+import { hash, paletteColor as color } from "./chat.ts";
 
 export type Tab = "commits" | "reflog" | "peers";
 
@@ -103,20 +104,6 @@ export interface ViewOptions {
 	 * Used for `peer-mode` and `peer-forget`.
 	 */
 	inline: (action: ViewAction) => Promise<string | undefined>;
-}
-
-// Lane and author colors: 256-color indexes that read well on dark and light backgrounds.
-const PALETTE = [39, 208, 170, 77, 203, 75, 178, 141, 37, 209];
-
-function color(index: number, text: string): string {
-	const code = PALETTE[((index % PALETTE.length) + PALETTE.length) % PALETTE.length];
-	return `\x1b[38;5;${code}m${text}\x1b[39m`;
-}
-
-function hash(text: string): number {
-	let value = 0;
-	for (let i = 0; i < text.length; i++) value = (value * 31 + text.charCodeAt(i)) | 0;
-	return Math.abs(value);
 }
 
 /** Truncates or pads a styled line to exactly `width` columns. */

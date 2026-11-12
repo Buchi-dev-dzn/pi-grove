@@ -9,7 +9,6 @@
 
 import { join } from "node:path";
 import { type ExtensionAPI, type ExtensionCommandContext, type ExtensionContext, getAgentDir } from "@earendil-works/pi-coding-agent";
-import { Text } from "@earendil-works/pi-tui";
 import { buildGrove, isContentEntry, PEER_MESSAGE_TYPE, peerMessageBody, type RawEntry, subjectOf } from "./graph/model.ts";
 import { layoutNodes } from "./graph/render.ts";
 import { findRelatedSessions, loadSources, type OtherSession } from "./graph/sessions.ts";
@@ -18,6 +17,7 @@ import { PEER_MODES, type PeerMode } from "./peers/hub.ts";
 import { grovePrompt } from "./peers/prompt.ts";
 import { registerPeerTools } from "./peers/tools.ts";
 import { Reflog } from "./reflog/journal.ts";
+import { exchange, GLYPH_RECEIVED } from "./ui/chat.ts";
 import { GroveView, initialState, type ReflogRow, type ViewAction, type ViewData, type ViewState } from "./ui/grove-view.ts";
 
 const FLAG_PEERS = "grove-peers";
@@ -42,12 +42,17 @@ export default function groveExtension(pi: ExtensionAPI): void {
 		type: "string",
 	});
 
-	pi.registerMessageRenderer<MessageDetails>(PEER_MESSAGE_TYPE, (message, options, theme) => {
-		const from = message.details?.from ?? "peer";
-		const lines = peerMessageBody(message.content).split("\n");
-		const shown = options.expanded || lines.length <= 6 ? lines : [...lines.slice(0, 6), theme.fg("dim", `… ${lines.length - 6} more lines`)];
-		return new Text(`${theme.bold(theme.fg("accent", `⇄ ${from}`))}\n${shown.join("\n")}`, options.outputPad, 0);
-	});
+	pi.registerMessageRenderer<MessageDetails>(PEER_MESSAGE_TYPE, (message, options, theme) =>
+		exchange(theme, {
+			glyph: GLYPH_RECEIVED,
+			name: message.details?.from ?? "peer",
+			// The stored content starts with a line that names the sender for the model.
+			body: peerMessageBody(message.content),
+			expanded: options.expanded,
+			expandHint: options.keyHint("app.tools.expand", "to expand"),
+			outputPad: options.outputPad,
+		}),
+	);
 
 	// ── session events ───────────────────────────────────────────────────────
 

@@ -12,3 +12,4 @@
 - Peer modes `auto`, `manual` and `off`, set with `/grove peers <mode>` for one repository, `/grove peers <mode> global` for every repository, or `--grove-peers <mode>` for one run.
 - Settings `mode` and `maxPeers` in `~/.pi/agent/pi-grove/config.json` and `<repository>/.git/pi-grove/config.json`.
 - `/grove spawn`, `/grove send` and `/grove stop`.
+- Peer activity in the conversation is drawn as an exchange: `+` for a new peer, `→` and `←` for messages, `▪` for board notes.
