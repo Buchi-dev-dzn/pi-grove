@@ -124,20 +124,9 @@ To work side by side with a peer yourself, open a second terminal in its worktre
 
 Peer activity is drawn as an exchange, not as generic tool calls. The peer's name has the same color as its lane in the graph.
 
-```
-+ strings  new peer
-  Implement src/strings.js with tests. Own only those two files.
-  ✓ grove/strings · ~/toolbox.grove/strings
+![Peer activity in the conversation: a new peer, messages in both directions and a board note](docs/conversation.png)
 
-→ strings
-  Math is done. Keep the string helpers free of dependencies.
-
-← strings
-  Ready on grove/strings. All 3 tests pass.
-
-▪ board  note for all peers
-  main owns src/math.js; strings owns src/strings.js.
-```
+The image shows parts of the session from the screenshot at the top; `⋮` marks where the conversation is cut.
 
 `+` starts a peer, `→` is a message your agent sent, `←` is a message that arrived, and `▪` is a note on the shared board. Long texts show their first three rows; expand them like any tool output (`ctrl+o` by default).
 
