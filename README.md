@@ -1,5 +1,8 @@
 # pi-grove
 
+[![CI](https://github.com/Buchi-dev-dzn/pi-grove/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Buchi-dev-dzn/pi-grove/actions/workflows/ci.yml)
+[![npm version](https://img.shields.io/npm/v/pi-grove)](https://www.npmjs.com/package/pi-grove)
+
 A [pi](https://pi.dev) extension that makes the session tree something you actually use.
 
 - **A lazygit-style graph of the session tree.** Every branch of the conversation is a lane, the way commits are in `lazygit`. Jump, fork, label and search from one panel.
