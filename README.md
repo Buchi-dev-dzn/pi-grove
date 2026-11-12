@@ -231,6 +231,8 @@ npm run demo -- ~/.pi/agent/sessions/<dir>/<session>.jsonl   # print a session a
 pi -e .          # run pi with the extension from this checkout
 ```
 
+GitHub Actions runs `npm ci`, `npm run check`, and `npm test` on Node.js 22 and 24 for pull requests and pushes to `main`. The CI workflow can also be started manually from the Actions tab. It does not publish packages or modify the repository.
+
 `scripts/ansi-to-svg.ts` turns a `tmux capture-pane -p -e` capture into an SVG. The screenshot above was made with it.
 
 The code is split so that most of it runs without pi:
