@@ -1,6 +1,6 @@
 {
   "name": "pi-grove",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A lazygit-style graph for pi's session tree, with a history of your moves and equal peer agents that each own a session branch and a git worktree.",
   "type": "module",
   "license": "MIT",

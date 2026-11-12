@@ -150,11 +150,15 @@ The mode decides how eagerly agents use peers.
 | `off` | No peers. The tools are hidden from the model and the session does not join the grove. The graph and the history still work. |
 
 ```
-/grove peers                 show the mode and the live peers
+/grove peers                 choose the mode from an inline list
 /grove peers manual          set the mode for this repository
 /grove peers manual global   set your default for every repository
 pi --grove-peers off         override the mode for one run
 ```
+
+`/grove peers` temporarily replaces the input editor with an English, description-backed mode list. The current mode is selected initially. Use `j`/`k` or the arrow keys to move, `Enter` to apply to this repository, and `Esc` to cancel without changing anything. The editor returns when the list closes. In non-TUI modes, the command reports the current mode instead.
+
+Command arguments also support completion: `/grove peers ` offers `auto`, `manual`, and `off` with explanations; `/grove peers manual ` offers `global`. A global default does not overwrite repository-specific settings.
 
 **Background peers use your model account like any other pi session.** In `auto` mode an agent can start peers without asking, up to the limit. If you want to decide each time, run `/grove peers manual global` once.
 
@@ -182,7 +186,7 @@ Settings are read from two JSON files. A value in the second file overrides the 
 /grove stop <peer>             stop a background peer
 ```
 
-The Peers tab of `/grove` shows every peer with its status, the recent messages and the board. Keys: `n` start a peer, `m` send a message, `x` stop a background peer, `d` forget a peer that has exited, `o` cycle the mode, `enter` show the peer in the graph.
+The Peers tab of `/grove` shows every peer with its status, the recent messages and the board. Keys: `n` start a peer, `m` send a message, `x` stop a background peer, `d` forget a peer that has exited, `o` open the same inline mode picker, `enter` show the peer in the graph.
 
 ### What a peer may do
 

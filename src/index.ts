@@ -12,6 +12,7 @@ import { type ExtensionAPI, type ExtensionCommandContext, type ExtensionContext,
 import { buildGrove, isContentEntry, PEER_MESSAGE_TYPE, peerMessageBody, type RawEntry, subjectOf } from "./graph/model.ts";
 import { layoutNodes } from "./graph/render.ts";
 import { findRelatedSessions, loadSources, type OtherSession } from "./graph/sessions.ts";
+import { groveCompletions } from "./peers/commands.ts";
 import { type MessageDetails, PeerController } from "./peers/controller.ts";
 import { PEER_MODES, type PeerMode } from "./peers/hub.ts";
 import { grovePrompt } from "./peers/prompt.ts";
@@ -19,6 +20,7 @@ import { registerPeerTools } from "./peers/tools.ts";
 import { Reflog } from "./reflog/journal.ts";
 import { exchange, GLYPH_RECEIVED } from "./ui/chat.ts";
 import { GroveView, initialState, type ReflogRow, type ViewAction, type ViewData, type ViewState } from "./ui/grove-view.ts";
+import { PeerModePicker } from "./ui/peer-mode-picker.ts";
 
 const FLAG_PEERS = "grove-peers";
 const PROMPT_SECTION = "grove";
@@ -176,15 +178,20 @@ export default function groveExtension(pi: ExtensionAPI): void {
 		}
 	}
 
-	async function cycleMode(ctx: ExtensionContext): Promise<string> {
-		const current = controller.config().mode;
-		const next = PEER_MODES[(PEER_MODES.indexOf(current) + 1) % PEER_MODES.length] ?? "manual";
-		try {
-			await controller.setMode(ctx, next);
-			return `peer mode: ${next}`;
-		} catch (error) {
-			return errorText(error);
+	async function chooseMode(ctx: ExtensionContext): Promise<string | undefined> {
+		if (!controller.grove) return "peers need a git repository";
+		if (ctx.mode !== "tui") {
+			const config = controller.config();
+			const names = controller.peers().filter((peer) => peer.alive).map((peer) => peer.id);
+			return `peer mode: ${config.mode} · live peers: ${names.join(", ") || "none"} (limit ${config.maxPeers}) · set with /grove peers auto|manual|off [global]`;
 		}
+		const mode = await ctx.ui.custom<PeerMode | undefined>(
+			(tui, theme, _keybindings, done) =>
+				new PeerModePicker(controller.config().mode, theme, done, () => tui.requestRender()),
+		);
+		if (!mode) return undefined;
+		await controller.setMode(ctx, mode);
+		return `peer mode for this repository: ${mode}`;
 	}
 
 	/**
@@ -250,8 +257,14 @@ export default function groveExtension(pi: ExtensionAPI): void {
 				}
 				return true;
 			}
-			case "peer-forget":
 			case "peer-mode":
+				try {
+					state.notice = await chooseMode(ctx);
+				} catch (error) {
+					state.notice = errorText(error);
+				}
+				return true;
+			case "peer-forget":
 				state.notice = await performInline(ctx, action);
 				return true;
 		}
@@ -259,7 +272,6 @@ export default function groveExtension(pi: ExtensionAPI): void {
 
 	/** Actions that need no dialog. The view runs them without closing. */
 	async function performInline(ctx: ExtensionContext, action: ViewAction): Promise<string | undefined> {
-		if (action.type === "peer-mode") return cycleMode(ctx);
 		if (action.type !== "peer-forget") return undefined;
 		const result = await controller.forgetPeer(ctx, action.peer);
 		if (!result.forgotten) return `${action.peer} is still running`;
@@ -293,20 +305,9 @@ export default function groveExtension(pi: ExtensionAPI): void {
 
 	// ── command and shortcut ─────────────────────────────────────────────────
 
-	const SUBCOMMANDS = [
-		{ value: "peers", label: "peers", description: "peers [auto|manual|off] [global]: show or set the peer mode" },
-		{ value: "spawn", label: "spawn", description: "spawn <name> <task>: start a peer in its own worktree" },
-		{ value: "send", label: "send", description: "send <peer|all> <message>" },
-		{ value: "stop", label: "stop", description: "stop <peer>: stop a background peer" },
-	];
-
 	pi.registerCommand("grove", {
 		description: "Open the session tree as a graph (tree, history, peers)",
-		getArgumentCompletions: (prefix) => {
-			if (prefix.includes(" ")) return null;
-			const items = SUBCOMMANDS.filter((item) => item.value.startsWith(prefix));
-			return items.length > 0 ? items : null;
-		},
+		getArgumentCompletions: groveCompletions,
 		handler: async (args, ctx) => {
 			const [command, ...rest] = args.trim().split(/\s+/).filter(Boolean);
 			if (!command) return openView(ctx);
@@ -314,14 +315,8 @@ export default function groveExtension(pi: ExtensionAPI): void {
 				if (command === "peers") {
 					const mode = rest[0];
 					if (!mode) {
-						const config = controller.config();
-						const names = controller.peers().filter((peer) => peer.alive).map((peer) => peer.id);
-						ctx.ui.notify(
-							controller.grove
-								? `peer mode: ${config.mode} · live peers: ${names.join(", ") || "none"} (limit ${config.maxPeers})`
-								: "peers need a git repository",
-							"info",
-						);
+						const notice = await chooseMode(ctx);
+						if (notice) ctx.ui.notify(notice, "info");
 					} else if (PEER_MODES.includes(mode as PeerMode) && rest[1] === "global") {
 						const applied = controller.setDefaultMode(ctx, mode as PeerMode);
 						const here = applied || !controller.grove ? "" : ` · this repository keeps its own mode: ${controller.config().mode}`;

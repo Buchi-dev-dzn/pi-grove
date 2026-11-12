@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.1.1] - 2026-11-12
+
+### Added
+
+- An English, description-backed peer mode picker in place of the input editor. Open it with `/grove peers` or `o` in the Peers tab; move with `j`/`k` or arrow keys, apply with Enter, and cancel with Escape.
+- Command argument completion for peer modes and the `global` scope, with behavioral descriptions.
+
+### Changed
+
+- The Peers tab's `o` key now opens the mode picker instead of immediately cycling the mode.
+
 ## [0.1.0] - 2026-11-12
 
 ### Added

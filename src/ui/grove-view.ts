@@ -101,7 +101,7 @@ export interface ViewOptions {
 	done: (action: ViewAction) => void;
 	/**
 	 * Performs an action that needs no dialog while the view stays open, and returns a notice.
-	 * Used for `peer-mode` and `peer-forget`.
+	 * Used for `peer-forget`.
 	 */
 	inline: (action: ViewAction) => Promise<string | undefined>;
 }
@@ -318,7 +318,7 @@ export class GroveView implements Component {
 		const peers = this.data.peers;
 		if (!peers.available) return;
 		const peer = peers.peers[this.state.peerIndex];
-		if (data === "o") this.runInline({ type: "peer-mode" });
+		if (data === "o") this.options.done({ type: "peer-mode" });
 		else if (data === "n" || data === "p") this.options.done({ type: "spawn" });
 		else if (!peer) return;
 		else if (data === "m") {
@@ -660,7 +660,7 @@ export class GroveView implements Component {
 			key("m", "send a message"),
 			key("x", "stop a background peer"),
 			key("d", "forget a peer that has exited"),
-			key("o", "cycle mode: auto → manual → off"),
+			key("o", "choose mode: auto / manual / off"),
 			key("enter", "show the peer in the graph"),
 		];
 	}
