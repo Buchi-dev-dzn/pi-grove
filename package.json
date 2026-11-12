@@ -1,0 +1,64 @@
+{
+  "name": "pi-grove",
+  "version": "0.1.0",
+  "description": "A lazygit-style graph for pi's session tree, with a history of your moves and equal peer agents that each own a session branch and a git worktree.",
+  "type": "module",
+  "license": "MIT",
+  "author": "Buchi-dev-dzn",
+  "homepage": "https://github.com/Buchi-dev-dzn/pi-grove#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Buchi-dev-dzn/pi-grove.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Buchi-dev-dzn/pi-grove/issues"
+  },
+  "keywords": [
+    "pi-package",
+    "pi",
+    "pi-coding-agent",
+    "extension",
+    "session-tree",
+    "git-worktree",
+    "multi-agent"
+  ],
+  "files": [
+    "src",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "pi": {
+    "extensions": [
+      "./src/index.ts"
+    ],
+    "image": "https://raw.githubusercontent.com/Buchi-dev-dzn/pi-grove/main/docs/screenshot.png"
+  },
+  "scripts": {
+    "check": "tsc --noEmit",
+    "test": "vitest run",
+    "demo": "node --experimental-strip-types scripts/demo.ts",
+    "prepublishOnly": "npm run check && npm test"
+  },
+  "peerDependencies": {
+    "@earendil-works/pi-ai": "*",
+    "@earendil-works/pi-coding-agent": "*",
+    "@earendil-works/pi-tui": "*",
+    "typebox": "*"
+  },
+  "devDependencies": {
+    "@earendil-works/pi-ai": "^1.5.2",
+    "@earendil-works/pi-coding-agent": "^1.5.2",
+    "@earendil-works/pi-tui": "^1.5.2",
+    "@types/node": "^24.0.0",
+    "typebox": "^1.3.27",
+    "typescript": "^5.9.0",
+    "vitest": "^3.2.0"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
