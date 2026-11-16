@@ -191,6 +191,10 @@ Settings are read from two JSON files. A value in the second file overrides the 
 
 The Peers tab of `/grove` shows every peer with its status, the recent messages and the board. Keys: `n` start a peer, `m` send a message, `x` stop a background peer, `d` forget a peer that has exited, `o` open the same inline mode picker, `enter` show the peer in the graph.
 
+### Skill
+
+pi-grove ships a skill, `grove-peers`, that agents load when they plan peer work: when a peer is worth starting instead of a subagent, a template for the task, how to use the board and messages, and how to verify and integrate a peer's branch. It is loaded in every mode; with peers `off` the grove tools are hidden, so agents have no reason to use it.
+
 ### What a peer may do
 
 Peers are told the following, and the extension itself never does more:

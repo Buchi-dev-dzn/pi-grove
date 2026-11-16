@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+
+- A bundled `grove-peers` skill: when to start a peer instead of a subagent, a task template, board and messaging conventions, and how to verify and integrate a `grove/<name>` branch.
+
 ## [0.1.1] - 2026-11-12
 
 ### Added
